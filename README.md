@@ -4,7 +4,7 @@ File sharing via web (http://filelocker2.sourceforge.net/)
 
 This fork is a UC Santa Cruz attempt to Shibbolize the Filelocker2 app. We based our approach on the WebSSO diffs found in the Sourceforge issues for Filelocker. 
 
-The WebSSO diffs were written against v2.4 of Filelocker. Our approach was to hunt for the same functions in the 2.6 branch and then applied the bare minimum number of changes to get us through the SAML authentication process.
+The WebSSO diffs were written against v2.4 of Filelocker. Our approach was to hunt for the same functions in the 2.6 branch and then applied the bare minimum number of changes to get us through the SAML authentication process. We used the base 2.6 to create our install and modified files from that point.
 
 In order to promote confidence and security, we're open to comments that can help us improve the security of this app with minimal 
 intrusion into existing code. We're running a series of security probes against our changes, the underlying code, OS and application layers.
