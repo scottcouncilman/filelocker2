@@ -2,18 +2,18 @@
 File sharing via web (http://filelocker2.sourceforge.net/)
 # Shibbolizing Filelocker 2.6
 
-This fork is our attempt to Shibbolize the Filelocker2 app. We based our approach on the WebSSO diffs found in the Sourceforge issues 
-for Filelocker. We did not implement all of those changes since they appear to have been written for 2.4. We simply hunted for the 
-code in the refactored 2.6 version and then applied the bare minimum to get us through the SAML authentication process.
+This fork is a UC Santa Cruz attempt to Shibbolize the Filelocker2 app. We based our approach on the WebSSO diffs found in the Sourceforge issues for Filelocker. 
+
+The WebSSO diffs were written against v2.4 of Filelocker. Our approach was to hunt for the same functions in the 2.6 branch and then applied the bare minimum number of changes to get us through the SAML authentication process.
 
 In order to promote confidence and security, we're open to comments that can help us improve the security of this app with minimal 
-intrusion into existing code.
+intrusion into existing code. We're running a series of security probes against our changes, the underlying code, OS and application layers.
 
 We have a successful test environment working. Here is our configuration:
 
 - Red Hat Enterprise Linux in a VM
-- Apache 2.2.15
--  MySQL 5.1.73
+- Apache 2.2.x
+- MySQL 5.1.73
 - Shibd 2.6.0
 - Filelocker2 v2.6
 
