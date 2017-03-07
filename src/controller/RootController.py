@@ -61,6 +61,10 @@ class RootController:
             return str(tpl)
         elif authType == "cas":
             raise cherrypy.HTTPRedirect(config['root_url'])
+        # PSM lines 65-67
+        elif authType == "saml":
+            username = cherrypy.request.headers['X-UID']
+            self.process(username, password)
         else:
             cherrypy.log.error("[system] [login] [No authentication variable set in config]")
             raise cherrypy.HTTPError(403, "No authentication mechanism")
