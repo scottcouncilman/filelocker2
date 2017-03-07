@@ -92,6 +92,54 @@ def requires_login(permissionId=None, **kwargs):
                     raise cherrypy.HTTPRedirect(rootURL+"/login")
                 else:
                     raise cherrypy.HTTPError(401)
+                    authType = session.query(ConfigParameter).filter(ConfigParameter.name=="auth_type").one().value
+            # PSM lines 97-131
+            if authType == "saml":
+                shibboleth_logout_url = session.query(ConfigParameter).filter(ConfigParameter.name=="shibboleth_logout_u    rl").one().value
+                #casUrl = session.query(ConfigParameter).filter(ConfigParameter.name=="cas_url").one().value
+                #casConnector = CAS(casUrl)
+                #if cherrypy.request.params.has_key("ticket"):
+                    #valid_ticket, userId = casConnector.validate_ticket(rootURL, cherrypy.request.params['ticket'])
+                    #if valid_ticket:
+                    if authType == "saml":
+                        currentUser = AccountService.get_user(userId, True)
+                        if currentUser is None:
+                            # user does not exist in FL MySQL DB
+                            shib_first_name = cherrypy.request.headers['X-GIVEN-NAME']
+                            shib_last_name = cherrypy.request.headers['X-SURNAME']
+                            shib_email = cherrypy.request.headers['X-MAIL']
+                            shib_display_name = cherrypy.request.headers['X-DISPLAY-NAME']
+                            shib_affiliation = cherrypy.request.headers['X-AFFILIATION']
+                            
+                            #currentUser = User(id=userId, display_name="Guest user", first_name="Unknown", last_name="Unknown")
+                            currentUser = User(id=userId, display_name=shib_display_name, first_name=shib_first_name, last_name=shib_last_name, email=shib_email)
+                            cherrypy.log.error("[%s] [requires_login] [User authenticated, but not found in directory - installing with defaults]"%str(userId))
+                            AccountService.install_user(currentUser)
+                            currentUser = AccountService.get_user(currentUser.id, True) #To populate attributes
+                        if not currentUser.authorized:
+                            raise cherrypy.HTTPError(403, "Your user account does not have access to this system.")
+                        session.add(AuditLog(currentUser.id, "Login", "User %s logged in successfully from IP %s" % (currentUser.id, cherrypy.request.remote.ip)))
+
+                        session.commit()
+                        if currentUser.date_tos_accept is None:
+                            if format == None:
+                                raise cherrypy.HTTPRedirect(rootURL+"/sign_tos")
+                            else:
+                                raise cherrypy.HTTPError(401)
+                        raise cherrypy.HTTPRedirect(rootURL)
+                    else:
+                        #raise cherrypy.HTTPError(403, "Invalid CAS Ticket. If you copied and pasted the URL for this server, you might need to remove the 'ticket' parameter from the URL.")
+                        raise cherrypy.HTTPError(403, "Invalid Shibboleth session. Please login with your CruzID Gold credentials")
+                else:
+                    if format == None:
+                        raise cherrypy.HTTPRedirect(casConnector.login_url(rootURL))
+                    else:
+                        raise cherrypy.HTTPError(401)
+            else:
+                if format == None:
+                    raise cherrypy.HTTPRedirect(rootURL+"/login")
+                else:
+                    raise cherrypy.HTTPError(401)
         except cherrypy.HTTPRedirect, redirect:
             raise redirect
         except cherrypy.HTTPError, httpe:
