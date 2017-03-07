@@ -85,6 +85,11 @@ class RootController:
             tpl = Template(file=get_template_file('cas_logout.tmpl'), searchList=[locals(), globals()])
             cherrypy.session['user'], cherrypy.response.cookie['filelocker']['expires'] = None, 0
             return str(tpl)
+        # PSM lines 89-92
+        elif authType == "saml":
+            shibboleth_logout_url = session.query(ConfigParameter).filter(ConfigParameter.name=="shibboleth_logout_url").one().value
+            cherrypy.session['user'], cherrypy.response.cookie['filelocker']['expires'] = None, 0
+            raise cherrypy.HTTPRedirect(shibboleth_logout_url)
         else:
             cherrypy.session['user'], cherrypy.response.cookie['filelocker']['expires'] = None, 0
             raise cherrypy.HTTPRedirect(config['root_url']+'/login?msg=2')
