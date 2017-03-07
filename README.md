@@ -20,3 +20,6 @@ We have a successful test environment working. Here is our configuration:
 Our campus IDP provides us (the SP) with basic attributes upon a successful authentication. Apache sets these attributes as RequestHeaders. We then pull information into Filelocker2 where needed.
 We did some of our initial development using a Docker container and setting up a workstation to act as a SP. 
 Using http://testshib.org we were able to create a successful authentication flow and proceed into testing on a development VM.
+
+# Issues
+[03-07-17] Since we can run an issue tracker on a forked project, I'm documenting an issue that came up today. We have been doing some updates to the Apache and other libraries. It's possible we made a change that I can't see in the code. In Filelocker.py we had been successfully allowing a NULL password to be used. This stopped working and we starting getting authentication errors stemming from a compare function. I tried a couple of changes with no success. I deleted myself from the DB, restored an older version of Filelocker.py with CAS code commented out and got things working again. This will need more research.
