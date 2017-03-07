@@ -21,7 +21,8 @@ from lib.CAS import CAS
 from lib.Constants import Actions
 from lib.Models import *
 from lib.Formatters import *
-from lib.FileFieldStorage import FileFieldStorage
+# Cherrypy 3.2+ _cpreqbody replaces usage of standard lib cgi, safemime, and cpcgifs
+# from lib.FileFieldStorage import FileFieldStorage
 
 cherrypy.server.max_request_body_size = 0
 def before_upload(**kwargs):
@@ -35,6 +36,13 @@ def requires_login(permissionId=None, **kwargs):
         format = cherrypy.request.params['format']
     if cherrypy.session.has_key("user") and cherrypy.session.get('user') is not None:
         user = cherrypy.session.get('user')
+        #PSM line 40-44
+        if hasattr(cherrypy.request, 'headers'):
+            remote_user = cherrypy.request.headers['X-UID']
+            if user.id != remote_user:
+                cherrypy.lib.sessions.expire()
+                raise cherrypy.HTTPRedirect(rootURL)
+                
         if user.date_tos_accept == None:
             raise cherrypy.HTTPRedirect(rootURL+"/sign_tos")
         elif permissionId is not None:
