@@ -1,6 +1,6 @@
 # filelocker2
 File sharing via web (http://filelocker2.sourceforge.net/)
-# Shibbolizing Filelocker 2.6
+# Shibbolizing Filelocker 2.6 for UC Santa Cruz
 
 This fork is a UC Santa Cruz attempt to Shibbolize the Filelocker2 app. We based our approach on the WebSSO diffs found in the Sourceforge issues for Filelocker. 
 
